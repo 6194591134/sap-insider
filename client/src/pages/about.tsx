@@ -6,7 +6,7 @@ export default function About() {
     <div className="min-h-screen bg-background">
       <div className="border-b bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8 py-12">
-          <h1 className="text-3xl lg:text-4xl font-bold">About The DOT Insider</h1>
+          <h1 className="text-3xl lg:text-4xl font-bold">About The SAP Insider</h1>
           <p className="text-muted-foreground mt-2">
             Your trusted source for DOT compliance and SAP support
           </p>
@@ -16,13 +16,13 @@ export default function About() {
       <div className="container mx-auto px-4 lg:px-8 py-12">
         <div className="max-w-4xl mx-auto space-y-12">
           {/* Mission */}
-          <Card className="border-l-4 border-l-primary">
+          <Card className="border-2 border-primary">
             <CardHeader>
               <CardTitle className="text-2xl">Our Mission</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-base text-muted-foreground leading-relaxed">
-                The DOT Insider exists to keep Substance Abuse Professionals (SAPs), Employee Assistance Professionals (EAPs), and compliance officers informed and empowered with unbiased, timely insight into regulatory changes, best practices, and vetted education resources.
+                The SAP Insider exists to keep Substance Abuse Professionals (SAPs), Employee Assistance Professionals (EAPs), and compliance officers informed and empowered with unbiased, timely insight into regulatory changes, best practices, and vetted education resources.
               </p>
               <p className="text-base text-muted-foreground leading-relaxed">
                 We believe that access to clear, actionable compliance information should never be a barrier to safety or professional excellence. Our platform serves as an independent hub where professionals can stay current, make informed decisions, and connect with trusted resources.
@@ -173,7 +173,7 @@ export default function About() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                The DOT Insider operates as an independent publication. We do not accept payment for reviews or editorial content. Provider listings may include sponsored placements, but all ratings and reviews are based on verified criteria and remain editorially independent. Our mission is to serve the compliance community with unbiased, professional information.
+                The SAP Insider operates as an independent publication. We do not accept payment for reviews or editorial content. Provider listings may include sponsored placements, but all ratings and reviews are based on verified criteria and remain editorially independent. Our mission is to serve the compliance community with unbiased, professional information.
               </p>
             </CardContent>
           </Card>

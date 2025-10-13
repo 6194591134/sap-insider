@@ -1,8 +1,8 @@
-# The DOT Insider
+# The SAP Insider
 
 ## Overview
 
-The DOT Insider is a professional compliance and regulatory resource platform serving Substance Abuse Professionals (SAPs), Employee Assistance Professionals (EAPs), and DOT compliance officers. The platform provides regulatory updates from multiple DOT agencies (FMCSA, PHMSA, FAA, FTA, FRA, USCG), educational content on the Return-to-Duty (RTD) process, independent provider reviews, and curated resources. The design emphasizes credibility, information clarity, and professional restraint to establish trust with compliance professionals.
+The SAP Insider is a professional compliance and regulatory resource platform serving Substance Abuse Professionals (SAPs), Employee Assistance Professionals (EAPs), and DOT compliance officers. The platform provides regulatory updates from multiple DOT agencies (FMCSA, PHMSA, FAA, FTA, FRA, USCG), educational content on the Return-to-Duty (RTD) process, independent provider reviews, and curated resources. The design emphasizes credibility, information clarity, and professional restraint to establish trust with compliance professionals.
 
 ## User Preferences
 

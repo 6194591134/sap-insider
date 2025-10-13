@@ -39,7 +39,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="flex items-center">
-              <span className="text-xl font-bold text-primary">The DOT Insider</span>
+              <span className="text-xl font-bold text-primary">The SAP Insider</span>
             </div>
           </Link>
 

@@ -1,4 +1,4 @@
-# The DOT Insider - Design Guidelines
+# The SAP Insider - Design Guidelines
 
 ## Design Approach & Philosophy
 
