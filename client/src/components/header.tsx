@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { ThemeToggle } from "./theme-toggle";
-import { Search, Menu, LogIn, LogOut, User } from "lucide-react";
+import { Search, Menu, LogIn, LogOut, User, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -101,6 +101,15 @@ export function Header() {
                           )}
                         </div>
                       </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href="/favorites">
+                          <div className="flex items-center cursor-pointer w-full" data-testid="link-favorites">
+                            <Heart className="mr-2 h-4 w-4" />
+                            <span>My Favorites</span>
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <a href="/api/logout" className="flex items-center cursor-pointer" data-testid="button-logout">

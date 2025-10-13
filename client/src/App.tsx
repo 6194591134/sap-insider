@@ -12,6 +12,7 @@ import ProviderProfile from "@/pages/provider-profile";
 import RTD from "@/pages/rtd";
 import Resources from "@/pages/resources";
 import Organizations from "@/pages/organizations";
+import Favorites from "@/pages/favorites";
 import About from "@/pages/about";
 import NotFound from "@/pages/not-found";
 
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/rtd" component={RTD} />
       <Route path="/resources" component={Resources} />
       <Route path="/organizations" component={Organizations} />
+      <Route path="/favorites" component={Favorites} />
       <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>

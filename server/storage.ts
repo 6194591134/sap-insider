@@ -13,15 +13,18 @@ import {
   type InsertOrganization,
   type User,
   type UpsertUser,
+  type Favorite,
+  type InsertFavorite,
   regulatoryUpdates,
   providers,
   reviews,
   resources,
   organizations,
   users,
+  favorites,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, and } from "drizzle-orm";
 
 export interface IStorage {
   // User operations - Required for Replit Auth
@@ -54,6 +57,12 @@ export interface IStorage {
   getAllOrganizations(): Promise<Organization[]>;
   getOrganizationById(id: string): Promise<Organization | undefined>;
   createOrganization(organization: InsertOrganization): Promise<Organization>;
+
+  // Favorites
+  getUserFavorites(userId: string): Promise<Favorite[]>;
+  addFavorite(favorite: InsertFavorite): Promise<Favorite>;
+  removeFavorite(userId: string, itemType: string, itemId: string): Promise<void>;
+  isFavorited(userId: string, itemType: string, itemId: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -190,6 +199,45 @@ export class DatabaseStorage implements IStorage {
       .values(insertOrganization)
       .returning();
     return organization;
+  }
+
+  // Favorites
+  async getUserFavorites(userId: string): Promise<Favorite[]> {
+    return await db.select().from(favorites).where(eq(favorites.userId, userId)).orderBy(desc(favorites.createdAt));
+  }
+
+  async addFavorite(insertFavorite: InsertFavorite): Promise<Favorite> {
+    const [favorite] = await db
+      .insert(favorites)
+      .values(insertFavorite)
+      .returning();
+    return favorite;
+  }
+
+  async removeFavorite(userId: string, itemType: string, itemId: string): Promise<void> {
+    await db
+      .delete(favorites)
+      .where(
+        and(
+          eq(favorites.userId, userId),
+          eq(favorites.itemType, itemType),
+          eq(favorites.itemId, itemId)
+        )
+      );
+  }
+
+  async isFavorited(userId: string, itemType: string, itemId: string): Promise<boolean> {
+    const [favorite] = await db
+      .select()
+      .from(favorites)
+      .where(
+        and(
+          eq(favorites.userId, userId),
+          eq(favorites.itemType, itemType),
+          eq(favorites.itemId, itemId)
+        )
+      );
+    return !!favorite;
   }
 }
 

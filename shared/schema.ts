@@ -140,3 +140,20 @@ export const insertOrganizationSchema = createInsertSchema(organizations).omit({
 
 export type Organization = typeof organizations.$inferSelect;
 export type InsertOrganization = z.infer<typeof insertOrganizationSchema>;
+
+// User Favorites
+export const favorites = pgTable("favorites", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  itemType: text("item_type").notNull(), // "provider" or "resource"
+  itemId: varchar("item_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertFavoriteSchema = createInsertSchema(favorites).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type Favorite = typeof favorites.$inferSelect;
+export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
