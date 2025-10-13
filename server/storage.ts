@@ -1,4 +1,5 @@
 // Referenced from blueprint:javascript_database integration
+// Referenced from blueprint:javascript_log_in_with_replit integration
 import {
   type RegulatoryUpdate,
   type InsertRegulatoryUpdate,
@@ -10,16 +11,23 @@ import {
   type InsertResource,
   type Organization,
   type InsertOrganization,
+  type User,
+  type UpsertUser,
   regulatoryUpdates,
   providers,
   reviews,
   resources,
   organizations,
+  users,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
 
 export interface IStorage {
+  // User operations - Required for Replit Auth
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
+
   // Regulatory Updates
   getAllUpdates(): Promise<RegulatoryUpdate[]>;
   getUpdateById(id: string): Promise<RegulatoryUpdate | undefined>;
@@ -49,6 +57,27 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // User operations - Required for Replit Auth
+  async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
+  }
+
   // Regulatory Updates
   async getAllUpdates(): Promise<RegulatoryUpdate[]> {
     return await db.select().from(regulatoryUpdates).orderBy(desc(regulatoryUpdates.publishedDate));
