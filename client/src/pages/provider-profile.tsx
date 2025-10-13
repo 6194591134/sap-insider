@@ -12,12 +12,12 @@ export default function ProviderProfile() {
   const providerId = params?.id;
 
   const { data: provider, isLoading: providerLoading } = useQuery<Provider>({
-    queryKey: ["/api/providers", providerId],
+    queryKey: [`/api/providers/${providerId}`],
     enabled: !!providerId,
   });
 
   const { data: reviews, isLoading: reviewsLoading } = useQuery<Review[]>({
-    queryKey: ["/api/reviews", providerId],
+    queryKey: [`/api/reviews/${providerId}`],
     enabled: !!providerId,
   });
 
@@ -36,7 +36,7 @@ export default function ProviderProfile() {
     );
   }
 
-  if (!provider) {
+  if (!provider || Array.isArray(provider)) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 lg:px-8 py-8">
@@ -137,7 +137,7 @@ export default function ProviderProfile() {
                 </CardContent>
               </Card>
 
-              {provider.features.length > 0 && (
+              {provider.features && provider.features.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle>Features</CardTitle>
@@ -154,7 +154,7 @@ export default function ProviderProfile() {
                 </Card>
               )}
 
-              {provider.languages.length > 0 && (
+              {provider.languages && provider.languages.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle>Languages Supported</CardTitle>
@@ -243,7 +243,7 @@ export default function ProviderProfile() {
                   </div>
                 </CardContent>
               </Card>
-            ) : reviews && reviews.length > 0 ? (
+            ) : reviews && Array.isArray(reviews) && reviews.length > 0 ? (
               reviews.map((review) => (
                 <Card key={review.id} data-testid={`card-review-${review.id}`}>
                   <CardHeader>
