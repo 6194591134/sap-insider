@@ -139,7 +139,7 @@ export default function Updates() {
                 {filteredUpdates.map((update) => (
                   <Card
                     key={update.id}
-                    className="border-l-4 border-l-primary hover-elevate"
+                    className="border-2 border-primary hover-elevate"
                     data-testid={`card-update-${update.id}`}
                   >
                     <CardHeader className="space-y-3">

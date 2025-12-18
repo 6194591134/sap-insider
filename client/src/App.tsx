@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import Home from "@/pages/home";
 import Updates from "@/pages/updates";
+import UpdateDetail from "@/pages/update-detail";
 import Reviews from "@/pages/reviews";
 import ProviderProfile from "@/pages/provider-profile";
 import RTD from "@/pages/rtd";
@@ -21,6 +22,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/updates" component={Updates} />
+      <Route path="/updates/:id" component={UpdateDetail} />
       <Route path="/reviews" component={Reviews} />
       <Route path="/reviews/:id" component={ProviderProfile} />
       <Route path="/rtd" component={RTD} />
