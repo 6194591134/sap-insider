@@ -9,6 +9,7 @@ import {
   insertResourceSchema,
   insertOrganizationSchema,
   insertFavoriteSchema,
+  insertNewsletterSubscriptionSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -240,6 +241,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ isFavorited });
     } catch (error) {
       res.status(500).json({ error: "Failed to check favorite" });
+    }
+  });
+
+  // Newsletter Subscription
+  app.post("/api/newsletter/subscribe", async (req, res) => {
+    try {
+      const data = insertNewsletterSubscriptionSchema.parse(req.body);
+      const subscription = await storage.subscribeToNewsletter(data);
+      res.status(201).json({ 
+        message: "Successfully subscribed to newsletter", 
+        subscription,
+        isResubscription: false
+      });
+    } catch (error: any) {
+      console.error("Newsletter subscription error:", error);
+      res.status(400).json({ error: "Failed to subscribe. Please check your email and try again." });
+    }
+  });
+
+  app.post("/api/newsletter/unsubscribe", async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+      await storage.unsubscribeFromNewsletter(email);
+      res.json({ message: "Successfully unsubscribed from newsletter" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to unsubscribe" });
     }
   });
 

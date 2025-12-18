@@ -1,12 +1,23 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Clock, TrendingUp, AlertCircle, Star, CheckCircle, Award, Building2, ExternalLink } from "lucide-react";
+import { Clock, TrendingUp, AlertCircle, Star, CheckCircle, Award, Building2, ExternalLink, Mail, Send } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { RegulatoryUpdate, Provider } from "@shared/schema";
 
 export default function Home() {
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [frequency, setFrequency] = useState("weekly");
+
   const { data: featuredUpdate, isLoading: updatesLoading } = useQuery<RegulatoryUpdate>({
     queryKey: ["/api/updates/featured"],
   });
@@ -19,9 +30,36 @@ export default function Home() {
     queryKey: ["/api/providers/top?limit=6"],
   });
 
+  const subscribeMutation = useMutation({
+    mutationFn: async (data: { email: string; firstName?: string; frequency: string }) => {
+      return await apiRequest("POST", "/api/newsletter/subscribe", data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Subscribed!",
+        description: "You've been added to our newsletter. Check your inbox for updates.",
+      });
+      setEmail("");
+      setFirstName("");
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to subscribe. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    subscribeMutation.mutate({ email, firstName: firstName || undefined, frequency });
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section - Emphasizing Provider Rankings & DOT Focus */}
+      {/* Hero Section */}
       <section className="border-b bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4 lg:px-8 py-16 lg:py-24">
           <div className="max-w-4xl mx-auto text-center space-y-6">
@@ -39,16 +77,16 @@ export default function Home() {
               Unbiased provider reviews, industry regulatory updates from FMCSA, FAA, FTA, FRA, PHMSA, USCG, and expert resources for substance abuse professionals.
             </p>
             <div className="flex flex-wrap gap-4 justify-center pt-4">
-              <Link href="/reviews">
-                <Button size="lg" data-testid="button-view-providers" className="hover-elevate">
-                  <Star className="mr-2 h-5 w-5" />
-                  Browse Top Providers
-                </Button>
-              </Link>
               <Link href="/updates">
-                <Button size="lg" variant="outline" data-testid="button-view-updates" className="hover-elevate">
+                <Button size="lg" data-testid="button-view-updates" className="hover-elevate">
                   <AlertCircle className="mr-2 h-5 w-5" />
                   Latest DOT Updates
+                </Button>
+              </Link>
+              <Link href="/reviews">
+                <Button size="lg" variant="outline" data-testid="button-view-providers" className="hover-elevate">
+                  <Star className="mr-2 h-5 w-5" />
+                  Browse Top Providers
                 </Button>
               </Link>
             </div>
@@ -57,85 +95,9 @@ export default function Home() {
       </section>
 
       <div className="container mx-auto px-4 lg:px-8 py-12">
-        {/* Featured Top Providers Section */}
+        {/* Industry News & Updates Section - NOW FIRST */}
         <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl lg:text-3xl font-bold">Top-Rated DOT Education Providers</h2>
-              <p className="text-muted-foreground mt-1">Independently reviewed and ranked by compliance professionals</p>
-            </div>
-            <Link href="/reviews">
-              <Button variant="outline" data-testid="button-see-all-providers" className="hover-elevate">
-                See All Providers
-                <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {topProviders?.slice(0, 6).map((provider, index) => (
-              <Card key={provider.id} className="hover-elevate" data-testid={`card-provider-${provider.id}`}>
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="h-14 w-14 rounded-lg bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">
-                      #{index + 1}
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < provider.rating
-                                ? "fill-primary text-primary"
-                                : "fill-muted text-muted"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm text-muted-foreground">
-                        {provider.reviewCount} reviews
-                      </span>
-                    </div>
-                  </div>
-                  <Link href={`/reviews/${provider.id}`} data-testid={`link-provider-${provider.id}`}>
-                    <CardTitle className="text-lg hover:text-primary transition-colors cursor-pointer">
-                      {provider.name}
-                    </CardTitle>
-                  </Link>
-                  <CardDescription className="line-clamp-2">
-                    {provider.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-2 flex-wrap mb-3">
-                    {provider.dotCompliant && (
-                      <Badge variant="secondary" className="text-xs">
-                        <CheckCircle className="mr-1 h-3 w-3" />
-                        DOT Compliant
-                      </Badge>
-                    )}
-                    {provider.verified && (
-                      <Badge variant="secondary" className="text-xs">
-                        <CheckCircle className="mr-1 h-3 w-3" />
-                        Verified
-                      </Badge>
-                    )}
-                  </div>
-                  <Link href={`/reviews/${provider.id}`}>
-                    <Button size="sm" variant="outline" className="w-full" data-testid={`button-view-provider-${provider.id}`}>
-                      View Details & Reviews
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Industry News & Updates Section */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
             <div>
               <h2 className="text-2xl lg:text-3xl font-bold">Industry News & Regulatory Updates</h2>
               <p className="text-muted-foreground mt-1">From American Substance Abuse Professionals, The SAP List, DOT agencies, and industry publications</p>
@@ -232,6 +194,166 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Newsletter Signup Section */}
+        <section className="mb-12">
+          <Card className="bg-primary/5 border-primary/20">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Mail className="h-6 w-6 text-primary" />
+                </div>
+              </div>
+              <CardTitle className="text-2xl">Stay Informed with The SAP Insider Newsletter</CardTitle>
+              <CardDescription className="text-base max-w-2xl mx-auto">
+                Get regulatory updates, provider news, and industry insights delivered directly to your inbox. Choose daily or weekly delivery.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubscribe} className="max-w-xl mx-auto space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="newsletter-name">First Name (optional)</Label>
+                    <Input
+                      id="newsletter-name"
+                      type="text"
+                      placeholder="Your first name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      data-testid="input-newsletter-name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newsletter-email">Email Address</Label>
+                    <Input
+                      id="newsletter-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      data-testid="input-newsletter-email"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Delivery Frequency</Label>
+                  <RadioGroup
+                    value={frequency}
+                    onValueChange={setFrequency}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="daily" id="daily" data-testid="radio-daily" />
+                      <Label htmlFor="daily" className="cursor-pointer">Daily Updates</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="weekly" id="weekly" data-testid="radio-weekly" />
+                      <Label htmlFor="weekly" className="cursor-pointer">Weekly Digest</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full"
+                  disabled={subscribeMutation.isPending}
+                  data-testid="button-subscribe"
+                >
+                  {subscribeMutation.isPending ? (
+                    "Subscribing..."
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Subscribe to Newsletter
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-muted-foreground text-center">
+                  We respect your privacy. Unsubscribe at any time.
+                </p>
+              </form>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Top-Rated Providers Section - NOW SECOND */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
+            <div>
+              <h2 className="text-2xl lg:text-3xl font-bold">Top-Rated DOT Education Providers</h2>
+              <p className="text-muted-foreground mt-1">Independently reviewed and ranked by compliance professionals</p>
+            </div>
+            <Link href="/reviews">
+              <Button variant="outline" data-testid="button-see-all-providers" className="hover-elevate">
+                See All Providers
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {topProviders?.slice(0, 6).map((provider, index) => (
+              <Card key={provider.id} className="hover-elevate" data-testid={`card-provider-${provider.id}`}>
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="h-14 w-14 rounded-lg bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">
+                      #{index + 1}
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < provider.rating
+                                ? "fill-primary text-primary"
+                                : "fill-muted text-muted"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        {provider.reviewCount} reviews
+                      </span>
+                    </div>
+                  </div>
+                  <Link href={`/reviews/${provider.id}`} data-testid={`link-provider-${provider.id}`}>
+                    <CardTitle className="text-lg hover:text-primary transition-colors cursor-pointer">
+                      {provider.name}
+                    </CardTitle>
+                  </Link>
+                  <CardDescription className="line-clamp-2">
+                    {provider.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-2 flex-wrap mb-3">
+                    {provider.dotCompliant && (
+                      <Badge variant="secondary" className="text-xs">
+                        <CheckCircle className="mr-1 h-3 w-3" />
+                        DOT Compliant
+                      </Badge>
+                    )}
+                    {provider.verified && (
+                      <Badge variant="secondary" className="text-xs">
+                        <CheckCircle className="mr-1 h-3 w-3" />
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
+                  <Link href={`/reviews/${provider.id}`}>
+                    <Button size="sm" variant="outline" className="w-full" data-testid={`button-view-provider-${provider.id}`}>
+                      View Details & Reviews
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
         {/* Sources & Resources Section */}
         <section className="bg-muted/30 rounded-lg p-8">
           <h2 className="text-2xl font-bold mb-4 text-center">Trusted Industry Sources</h2>
@@ -245,12 +367,12 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-1 text-xs text-muted-foreground">
-                  <p>• FMCSA (Trucking)</p>
-                  <p>• FAA (Aviation)</p>
-                  <p>• FTA (Transit)</p>
-                  <p>• FRA (Railroad)</p>
-                  <p>• PHMSA (Pipeline)</p>
-                  <p>• USCG (Maritime)</p>
+                  <p>FMCSA (Trucking)</p>
+                  <p>FAA (Aviation)</p>
+                  <p>FTA (Transit)</p>
+                  <p>FRA (Railroad)</p>
+                  <p>PHMSA (Pipeline)</p>
+                  <p>USCG (Maritime)</p>
                 </div>
               </CardContent>
             </Card>
@@ -260,9 +382,9 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-1 text-xs text-muted-foreground">
-                  <p>• American Substance Abuse Professionals</p>
-                  <p>• The SAP List</p>
-                  <p>• EAP Associations</p>
+                  <p>American Substance Abuse Professionals</p>
+                  <p>The SAP List</p>
+                  <p>EAP Associations</p>
                 </div>
               </CardContent>
             </Card>
@@ -272,10 +394,10 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-1 text-xs text-muted-foreground">
-                  <p>• Long Haul Trucker</p>
-                  <p>• Aviation Week</p>
-                  <p>• Fleet Owner</p>
-                  <p>• Transport Topics</p>
+                  <p>Long Haul Trucker</p>
+                  <p>Aviation Week</p>
+                  <p>Fleet Owner</p>
+                  <p>Transport Topics</p>
                 </div>
               </CardContent>
             </Card>

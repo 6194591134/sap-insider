@@ -15,6 +15,8 @@ import {
   type UpsertUser,
   type Favorite,
   type InsertFavorite,
+  type NewsletterSubscription,
+  type InsertNewsletterSubscription,
   regulatoryUpdates,
   providers,
   reviews,
@@ -22,6 +24,7 @@ import {
   organizations,
   users,
   favorites,
+  newsletterSubscriptions,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, and } from "drizzle-orm";
@@ -63,6 +66,12 @@ export interface IStorage {
   addFavorite(favorite: InsertFavorite): Promise<Favorite>;
   removeFavorite(userId: string, itemType: string, itemId: string): Promise<void>;
   isFavorited(userId: string, itemType: string, itemId: string): Promise<boolean>;
+
+  // Newsletter
+  subscribeToNewsletter(subscription: InsertNewsletterSubscription): Promise<NewsletterSubscription>;
+  getNewsletterSubscriptionByEmail(email: string): Promise<NewsletterSubscription | undefined>;
+  updateNewsletterSubscription(email: string, updates: Partial<NewsletterSubscription>): Promise<NewsletterSubscription | undefined>;
+  unsubscribeFromNewsletter(email: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -238,6 +247,48 @@ export class DatabaseStorage implements IStorage {
         )
       );
     return !!favorite;
+  }
+
+  // Newsletter
+  async subscribeToNewsletter(insertSubscription: InsertNewsletterSubscription): Promise<NewsletterSubscription> {
+    const [subscription] = await db
+      .insert(newsletterSubscriptions)
+      .values(insertSubscription)
+      .onConflictDoUpdate({
+        target: newsletterSubscriptions.email,
+        set: {
+          firstName: insertSubscription.firstName,
+          lastName: insertSubscription.lastName,
+          frequency: insertSubscription.frequency,
+          active: true,
+        },
+      })
+      .returning();
+    return subscription;
+  }
+
+  async getNewsletterSubscriptionByEmail(email: string): Promise<NewsletterSubscription | undefined> {
+    const [subscription] = await db
+      .select()
+      .from(newsletterSubscriptions)
+      .where(eq(newsletterSubscriptions.email, email));
+    return subscription || undefined;
+  }
+
+  async updateNewsletterSubscription(email: string, updates: Partial<NewsletterSubscription>): Promise<NewsletterSubscription | undefined> {
+    const [subscription] = await db
+      .update(newsletterSubscriptions)
+      .set(updates)
+      .where(eq(newsletterSubscriptions.email, email))
+      .returning();
+    return subscription || undefined;
+  }
+
+  async unsubscribeFromNewsletter(email: string): Promise<void> {
+    await db
+      .update(newsletterSubscriptions)
+      .set({ active: false })
+      .where(eq(newsletterSubscriptions.email, email));
   }
 }
 
