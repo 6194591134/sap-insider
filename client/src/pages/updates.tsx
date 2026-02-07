@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Clock, Search, Filter, ChevronDown, ChevronUp } from "lucide-react";
+import { Clock, Search, Filter, ChevronDown, ChevronUp, Newspaper } from "lucide-react";
 import type { RegulatoryUpdate } from "@shared/schema";
+import sectionUpdatesImg from "@/assets/images/section-updates.png";
 
-const agencies = ["FMCSA", "PHMSA", "FAA", "FTA", "FRA", "USCG"];
+const agencies = ["DOT", "FMCSA", "PHMSA", "FAA", "FTA", "FRA", "USCG"];
 
 export default function Updates() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,8 +38,14 @@ export default function Updates() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-8 py-12">
+      <div className="border-b relative overflow-hidden">
+        <img src={sectionUpdatesImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/80" />
+        <div className="container mx-auto px-4 lg:px-8 py-12 relative">
+          <div className="flex items-center gap-3 mb-2">
+            <Newspaper className="h-6 w-6 text-primary" />
+            <Badge variant="outline">All Agencies</Badge>
+          </div>
           <h1 className="text-3xl lg:text-4xl font-bold">Regulatory Updates</h1>
           <p className="text-muted-foreground mt-2">
             Stay current with the latest DOT compliance changes and notices

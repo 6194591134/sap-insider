@@ -4,8 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
-import { Download, Search, FileText, Video, BookOpen, ClipboardList, Clock, User } from "lucide-react";
+import { Download, Search, FileText, Video, BookOpen, ClipboardList, Clock, User, Library } from "lucide-react";
 import type { Resource } from "@shared/schema";
+import sectionResourcesImg from "@/assets/images/section-resources.png";
 
 const resourceIcons = {
   template: FileText,
@@ -33,8 +34,14 @@ export default function Resources() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-8 py-12">
+      <div className="border-b relative overflow-hidden">
+        <img src={sectionResourcesImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/80" />
+        <div className="container mx-auto px-4 lg:px-8 py-12 relative">
+          <div className="flex items-center gap-3 mb-2">
+            <Library className="h-6 w-6 text-primary" />
+            <Badge variant="outline">Professional Tools</Badge>
+          </div>
           <h1 className="text-3xl lg:text-4xl font-bold">Resources Hub</h1>
           <p className="text-muted-foreground mt-2">
             Templates, webinars, guides, and tools for DOT compliance professionals

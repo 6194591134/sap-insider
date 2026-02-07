@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { ExternalLink, Users, Calendar, Award } from "lucide-react";
+import { ExternalLink, Users, Calendar, Award, Building } from "lucide-react";
 import type { Organization } from "@shared/schema";
+import sectionOrgsImg from "@/assets/images/section-organizations.png";
 
 export default function Organizations() {
   const { data: organizations, isLoading } = useQuery<Organization[]>({
@@ -15,8 +16,14 @@ export default function Organizations() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-8 py-12">
+      <div className="border-b relative overflow-hidden">
+        <img src={sectionOrgsImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/80" />
+        <div className="container mx-auto px-4 lg:px-8 py-12 relative">
+          <div className="flex items-center gap-3 mb-2">
+            <Building className="h-6 w-6 text-primary" />
+            <Badge variant="outline">Industry Partners</Badge>
+          </div>
           <h1 className="text-3xl lg:text-4xl font-bold">SAP Organizations & Partners</h1>
           <p className="text-muted-foreground mt-2">
             Professional organizations supporting substance abuse professionals and compliance officers
@@ -44,7 +51,7 @@ export default function Organizations() {
                 <h2 className="text-2xl font-semibold">Featured Organizations</h2>
                 <div className="space-y-6">
                   {featuredOrgs.map((org) => (
-                    <Card key={org.id} className="border-l-4 border-l-primary hover-elevate" data-testid={`card-org-${org.id}`}>
+                    <Card key={org.id} className="border-2 border-primary hover-elevate" data-testid={`card-org-${org.id}`}>
                       <CardHeader className="space-y-4">
                         <div className="flex items-start gap-6">
                           <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center text-2xl font-semibold text-muted-foreground flex-shrink-0">
