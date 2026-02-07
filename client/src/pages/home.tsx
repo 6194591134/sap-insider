@@ -10,7 +10,7 @@ import { Link } from "wouter";
 import { Clock, TrendingUp, AlertCircle, Star, CheckCircle, Award, Building2, ExternalLink, Mail, Send } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { RegulatoryUpdate, Provider } from "@shared/schema";
+import type { RegulatoryUpdate, Provider, Organization } from "@shared/schema";
 
 export default function Home() {
   const { toast } = useToast();
@@ -29,6 +29,12 @@ export default function Home() {
   const { data: topProviders } = useQuery<Provider[]>({
     queryKey: ["/api/providers/top?limit=6"],
   });
+
+  const { data: allOrganizations } = useQuery<Organization[]>({
+    queryKey: ["/api/organizations"],
+  });
+
+  const featuredOrganizations = allOrganizations?.filter(org => org.featured) || [];
 
   const subscribeMutation = useMutation({
     mutationFn: async (data: { email: string; firstName?: string; frequency: string }) => {
@@ -353,6 +359,60 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* Featured Organizations Section */}
+        {featuredOrganizations.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Building2 className="h-5 w-5 text-primary" />
+                  <h2 className="text-2xl font-bold" data-testid="text-featured-orgs-heading">Featured Organizations</h2>
+                </div>
+                <p className="text-muted-foreground">Leading professional organizations in the SAP industry</p>
+              </div>
+              <Link href="/organizations">
+                <Button variant="outline" size="sm" data-testid="button-view-all-organizations">
+                  View All Organizations
+                  <ExternalLink className="ml-1 h-3 w-3" />
+                </Button>
+              </Link>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              {featuredOrganizations.map((org) => (
+                <Card key={org.id} className="hover-elevate" data-testid={`card-org-${org.id}`}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2 flex-wrap">
+                      <div>
+                        <CardTitle className="text-lg" data-testid={`text-org-name-${org.id}`}>{org.name}</CardTitle>
+                        {org.stats && (
+                          <div className="flex items-center gap-3 mt-1 flex-wrap">
+                            {(org.stats as Record<string, string>).established && (
+                              <span className="text-xs text-muted-foreground">Est. {(org.stats as Record<string, string>).established}</span>
+                            )}
+                            {(org.stats as Record<string, string>).members && (
+                              <Badge variant="secondary" className="text-xs">{(org.stats as Record<string, string>).members} Members</Badge>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <Badge variant="default" className="text-xs shrink-0">Featured</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4" data-testid={`text-org-desc-${org.id}`}>{org.description}</p>
+                    <a href={org.website} target="_blank" rel="noopener noreferrer">
+                      <Button size="sm" variant="outline" className="w-full" data-testid={`button-visit-org-${org.id}`}>
+                        Visit Website
+                        <ExternalLink className="ml-1 h-3 w-3" />
+                      </Button>
+                    </a>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Sources & Resources Section */}
         <section className="bg-muted/30 rounded-lg p-8">
