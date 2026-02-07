@@ -282,7 +282,7 @@ async function seed() {
       name: "The SAP List",
       logo: null,
       description: "Comprehensive directory of qualified Substance Abuse Professionals across the United States. The SAP List helps employers and employees locate certified SAPs for DOT evaluations and return-to-duty processes.",
-      website: "https://thesaplist.com",
+      website: "https://www.saplist.com",
       stats: {
         members: "3,500+ SAPs",
         established: "2015",

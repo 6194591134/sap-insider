@@ -443,7 +443,7 @@ export default function Home() {
               <CardContent>
                 <div className="space-y-1 text-xs text-muted-foreground">
                   <a href="https://go2asap.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-asap">American Substance Abuse Professionals</a>
-                  <a href="https://www.thesaplist.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-saplist">The SAP List</a>
+                  <a href="https://www.saplist.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-saplist">The SAP List</a>
                   <a href="https://www.eapassn.org" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-eapassn">EAP Associations</a>
                 </div>
               </CardContent>
