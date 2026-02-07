@@ -270,7 +270,7 @@ async function seed() {
       name: "ASAP (Association of SAP Professionals)",
       logo: null,
       description: "Leading professional organization dedicated to advancing the field of substance abuse prevention and promoting excellence among SAPs. ASAP provides certification, continuing education, and networking opportunities for professionals.",
-      website: "https://asap.org",
+      website: "https://go2asap.com",
       stats: {
         members: "5,000+",
         established: "1992",
