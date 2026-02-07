@@ -68,7 +68,7 @@ export default function Home() {
               <Badge variant="default" className="text-sm">Trusted by DOT Compliance Professionals</Badge>
             </div>
             <h1 className="text-4xl lg:text-5xl font-bold text-foreground">
-              Independent Rankings & Reviews for DOT Substance Abuse Education Providers
+              Independent Rankings & Reviews for Substance Abuse Professionals
             </h1>
             <p className="text-xl text-muted-foreground">
               Find the best SAP training, certification courses, and Return-to-Duty resources
