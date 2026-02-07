@@ -367,12 +367,12 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-1 text-xs text-muted-foreground">
-                  <p>FMCSA (Trucking)</p>
-                  <p>FAA (Aviation)</p>
-                  <p>FTA (Transit)</p>
-                  <p>FRA (Railroad)</p>
-                  <p>PHMSA (Pipeline)</p>
-                  <p>USCG (Maritime)</p>
+                  <a href="https://www.fmcsa.dot.gov" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-fmcsa">FMCSA (Trucking)</a>
+                  <a href="https://www.faa.gov" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-faa">FAA (Aviation)</a>
+                  <a href="https://www.transit.dot.gov" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-fta">FTA (Transit)</a>
+                  <a href="https://railroads.dot.gov" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-fra">FRA (Railroad)</a>
+                  <a href="https://www.phmsa.dot.gov" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-phmsa">PHMSA (Pipeline)</a>
+                  <a href="https://www.uscg.mil" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-uscg">USCG (Maritime)</a>
                 </div>
               </CardContent>
             </Card>
@@ -382,9 +382,9 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-1 text-xs text-muted-foreground">
-                  <p>American Substance Abuse Professionals</p>
-                  <p>The SAP List</p>
-                  <p>EAP Associations</p>
+                  <a href="https://go2asap.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-asap">American Substance Abuse Professionals</a>
+                  <a href="https://www.thesaplist.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-saplist">The SAP List</a>
+                  <a href="https://www.eapassn.org" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-eapassn">EAP Associations</a>
                 </div>
               </CardContent>
             </Card>
@@ -394,10 +394,10 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-1 text-xs text-muted-foreground">
-                  <p>Long Haul Trucker</p>
-                  <p>Aviation Week</p>
-                  <p>Fleet Owner</p>
-                  <p>Transport Topics</p>
+                  <a href="https://www.longhaultrucker.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-longhaultrucker">Long Haul Trucker</a>
+                  <a href="https://aviationweek.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-aviationweek">Aviation Week</a>
+                  <a href="https://www.fleetowner.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-fleetowner">Fleet Owner</a>
+                  <a href="https://www.ttnews.com" target="_blank" rel="noopener noreferrer" className="block hover:text-primary transition-colors" data-testid="link-transporttopics">Transport Topics</a>
                 </div>
               </CardContent>
             </Card>
