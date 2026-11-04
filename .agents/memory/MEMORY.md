@@ -1,0 +1,1 @@
+- [Regulatory news accuracy](regulatory-news-accuracy.md) — verify primary sources and legal status; never invent dates or effective rules to freshen the feed.
