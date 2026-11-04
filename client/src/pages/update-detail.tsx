@@ -55,6 +55,14 @@ export default function UpdateDetail() {
     );
   }
 
+  const sourceMatch = update.content.match(/\n\nOfficial sources?: ([^\n]+)$/);
+  const sourceUrls = sourceMatch
+    ? sourceMatch[1].split("|").map((url) => url.trim()).filter((url) => url.startsWith("https://"))
+    : [];
+  const updateContent = sourceMatch
+    ? update.content.slice(0, sourceMatch.index).trimEnd()
+    : update.content;
+
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b bg-muted/30">
@@ -129,11 +137,29 @@ export default function UpdateDetail() {
                 className="prose prose-sm dark:prose-invert max-w-none"
                 data-testid="text-update-content"
               >
-                {update.content.split('\n').map((paragraph, index) => (
+                {updateContent.split('\n').map((paragraph, index) => (
                   <p key={index} className="text-foreground leading-relaxed mb-4">
                     {paragraph}
                   </p>
                 ))}
+                {sourceUrls.length > 0 && (
+                  <div className="mt-6 border-t pt-4">
+                    <p className="text-sm font-semibold mb-2">Official source{sourceUrls.length > 1 ? "s" : ""}</p>
+                    <div className="flex flex-wrap gap-x-5 gap-y-2">
+                      {sourceUrls.map((url, index) => (
+                        <a
+                          key={url}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-primary underline underline-offset-4 hover:opacity-80"
+                        >
+                          {sourceUrls.length > 1 ? `View source ${index + 1}` : "View official source"}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
