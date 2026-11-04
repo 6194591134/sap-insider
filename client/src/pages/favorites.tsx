@@ -78,7 +78,7 @@ export default function Favorites() {
         <div className="space-y-8">
           {/* Favorite Providers */}
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Saved Providers</h2>
+            <h2 className="headline text-3xl mb-4">Saved Providers</h2>
             {favoriteProviders && favoriteProviders.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {favoriteProviders.map((provider) => (
@@ -144,7 +144,7 @@ export default function Favorites() {
 
           {/* Favorite Resources */}
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Saved Resources</h2>
+            <h2 className="headline text-3xl mb-4">Saved Resources</h2>
             {favoriteResources && favoriteResources.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {favoriteResources.map((resource) => (

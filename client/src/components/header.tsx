@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { ThemeToggle } from "./theme-toggle";
-import { Search, Menu, LogIn, LogOut, User, Heart } from "lucide-react";
+import { Search, Menu, LogOut, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -9,7 +9,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -26,148 +25,99 @@ const navigation = [
   { name: "About", path: "/about" },
 ];
 
+const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+
 export function Header() {
   const [location] = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { user, isAuthenticated } = useAuth();
+
+  const isActive = (path: string) => (path === "/" ? location === "/" : location.startsWith(path));
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="bg-background">
+      {/* Masthead */}
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="flex items-center">
-              <span className="text-xl font-bold text-primary">The SAP Insider</span>
-            </div>
+        <div className="flex items-center justify-between py-4 lg:py-6 gap-4">
+          <div className="hidden md:block w-56 text-xs text-muted-foreground leading-snug">
+            <div className="font-semibold text-foreground">{today}</div>
+            <div>DOT drug &amp; alcohol compliance news</div>
+          </div>
+
+          <Link href="/" className="md:text-center" data-testid="link-logo">
+            <span className="font-serif font-bold tracking-tight text-3xl lg:text-5xl text-foreground">The SAP Insider</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => (
-              <Link key={item.path} href={item.path}>
-                <Button
-                  variant={location === item.path ? "secondary" : "ghost"}
-                  size="sm"
-                  data-testid={`link-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
-                  className="hover-elevate"
-                >
-                  {item.name}
-                </Button>
-              </Link>
-            ))}
-          </nav>
-
-          {/* Search & Theme Toggle */}
-          <div className="flex items-center gap-3">
-            <div className="hidden lg:flex items-center relative">
-              <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 w-64"
-                data-testid="input-search"
-              />
-            </div>
-
-            {/* Auth Section */}
-            {!isLoading && (
-              <>
-                {isAuthenticated && user ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="relative rounded-full" data-testid="button-user-menu">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.profileImageUrl || undefined} alt={user.email || "User"} />
-                          <AvatarFallback>
-                            {user.firstName?.[0] || user.email?.[0] || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>
-                        <div className="flex flex-col space-y-1">
-                          <p className="text-sm font-medium leading-none">
-                            {user.firstName && user.lastName
-                              ? `${user.firstName} ${user.lastName}`
-                              : user.email || "User"}
-                          </p>
-                          {user.email && (
-                            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                          )}
-                        </div>
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href="/favorites">
-                          <div className="flex items-center cursor-pointer w-full" data-testid="link-favorites">
-                            <Heart className="mr-2 h-4 w-4" />
-                            <span>My Favorites</span>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <a href="/api/logout" className="flex items-center cursor-pointer" data-testid="button-logout">
-                          <LogOut className="mr-2 h-4 w-4" />
-                          <span>Log out</span>
-                        </a>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <Button asChild size="sm" data-testid="button-login" className="hidden md:flex">
-                    <a href="/api/login">
-                      <LogIn className="mr-2 h-4 w-4" />
-                      Log in
-                    </a>
-                  </Button>
-                )}
-              </>
-            )}
-
+          <div className="flex items-center justify-end gap-1 md:w-56">
+            <Button variant="ghost" size="icon" onClick={() => setSearchOpen((v) => !v)} aria-label="Search" data-testid="button-search">
+              <Search className="h-5 w-5" />
+            </Button>
             <ThemeToggle />
-            
-            {/* Mobile Menu */}
+            {isAuthenticated && user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full" data-testid="button-user-menu">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.profileImageUrl || undefined} alt={user.email || "User"} />
+                      <AvatarFallback>{user.firstName?.[0] || user.email?.[0] || "U"}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link href="/favorites"><div className="flex items-center w-full cursor-pointer"><Heart className="mr-2 h-4 w-4" />Saved</div></Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <a href="/api/logout" className="flex items-center cursor-pointer"><LogOut className="mr-2 h-4 w-4" />Log out</a>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-mobile-menu">
                   <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle menu</span>
+                  <span className="sr-only">Menu</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-72">
-                <nav className="flex flex-col space-y-2 mt-8">
+                <nav className="flex flex-col mt-8 divide-y">
                   {navigation.map((item) => (
                     <Link key={item.path} href={item.path} onClick={() => setMobileOpen(false)}>
-                      <Button
-                        variant={location === item.path ? "secondary" : "ghost"}
-                        className="w-full justify-start hover-elevate"
-                        data-testid={`mobile-link-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        {item.name}
-                      </Button>
+                      <span className={`block py-3 font-serif text-lg ${isActive(item.path) ? "font-bold" : ""}`}>{item.name}</span>
                     </Link>
                   ))}
-                  <div className="pt-4">
-                    <Input
-                      type="search"
-                      placeholder="Search..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      data-testid="input-mobile-search"
-                    />
-                  </div>
                 </nav>
               </SheetContent>
             </Sheet>
           </div>
         </div>
+        {searchOpen && (
+          <div className="pb-4">
+            <Input autoFocus type="search" placeholder="Search updates, providers, resources" value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)} className="max-w-xl mx-auto" data-testid="input-search" />
+          </div>
+        )}
       </div>
+
+      {/* Section nav */}
+      <div className="sticky top-0 z-50 border-y-2 border-foreground/90 bg-background/95 backdrop-blur hidden md:block">
+        <nav className="container mx-auto px-4 lg:px-8 flex items-center justify-center gap-1 h-11">
+          {navigation.map((item) => (
+            <Link key={item.path} href={item.path}
+              data-testid={`link-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+              className={`px-3 h-full flex items-center text-[13px] font-semibold uppercase tracking-wide border-b-2 -mb-[2px] transition-colors ${
+                isActive(item.path) ? "border-[hsl(4_72%_44%)] text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}>
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+      </div>
+      <div className="md:hidden border-t-2 border-foreground/90" />
     </header>
   );
 }

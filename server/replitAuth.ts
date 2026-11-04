@@ -9,9 +9,8 @@ import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
-if (!process.env.REPLIT_DOMAINS) {
-  throw new Error("Environment variable REPLIT_DOMAINS not provided");
-}
+// Replit login only works on Replit. Elsewhere, login is turned off until a replacement is added.
+export const authEnabled = Boolean(process.env.REPLIT_DOMAINS && process.env.REPL_ID);
 
 const getOidcConfig = memoize(
   async () => {
@@ -69,6 +68,11 @@ async function upsertUser(
 
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
+  if (!authEnabled) {
+    app.get("/api/login", (_req, res) => res.redirect("/"));
+    app.get("/api/logout", (_req, res) => res.redirect("/"));
+    return;
+  }
   app.use(getSession());
   app.use(passport.initialize());
   app.use(passport.session());
@@ -131,7 +135,7 @@ export async function setupAuth(app: Express) {
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
   const user = req.user as any;
 
-  if (!req.isAuthenticated() || !user.expires_at) {
+  if (!authEnabled || !req.isAuthenticated?.() || !user.expires_at) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 

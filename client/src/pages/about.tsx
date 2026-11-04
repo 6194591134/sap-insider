@@ -1,30 +1,17 @@
+import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Shield, BookOpen, Users, Info } from "lucide-react";
-import sectionAboutImg from "@/assets/images/section-about.png";
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b relative overflow-hidden">
-        <img src={sectionAboutImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/80" />
-        <div className="container mx-auto px-4 lg:px-8 py-12 relative">
-          <div className="flex items-center gap-3 mb-2">
-            <Info className="h-6 w-6 text-primary" />
-            <Badge variant="outline">Our Mission</Badge>
-          </div>
-          <h1 className="text-3xl lg:text-4xl font-bold">About The SAP Insider</h1>
-          <p className="text-muted-foreground mt-2">
-            Your trusted source for DOT compliance and SAP support
-          </p>
-        </div>
-      </div>
+    <div>
+      <PageHeader kicker="Our mission" title="About The SAP Insider" intro="Your trusted source for DOT compliance and SAP support" />
 
       <div className="container mx-auto px-4 lg:px-8 py-12">
         <div className="max-w-4xl mx-auto space-y-12">
           {/* Mission */}
-          <Card className="border-2 border-primary">
+          <Card className="border">
             <CardHeader>
               <CardTitle className="text-2xl">Our Mission</CardTitle>
             </CardHeader>
@@ -40,7 +27,7 @@ export default function About() {
 
           {/* Core Values */}
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">Our Core Values</h2>
+            <h2 className="headline text-3xl">Our Core Values</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <Card className="hover-elevate">
                 <CardHeader>

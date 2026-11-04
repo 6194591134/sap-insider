@@ -23,7 +23,7 @@ export default function ProviderProfile() {
 
   if (providerLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div>
         <div className="container mx-auto px-4 lg:px-8 py-8">
           <Card>
             <CardHeader className="space-y-4">
@@ -62,7 +62,7 @@ export default function ProviderProfile() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b bg-muted/30">
+      <div className="border-b-2 border-foreground/90">
         <div className="container mx-auto px-4 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center text-3xl font-semibold text-muted-foreground">
@@ -71,7 +71,7 @@ export default function ProviderProfile() {
             <div className="flex-1 space-y-3">
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div>
-                  <h1 className="text-3xl font-bold">{provider.name}</h1>
+                  <h1 className="headline text-4xl">{provider.name}</h1>
                   <div className="flex items-center gap-3 mt-2 flex-wrap">
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
@@ -269,7 +269,7 @@ export default function ProviderProfile() {
                         )}
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(review.createdAt).toLocaleDateString()}
+                        {review.createdAt ? new Date(review.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
                       </span>
                     </div>
                   </CardHeader>

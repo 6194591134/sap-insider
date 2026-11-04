@@ -1,0 +1,26 @@
+# Render setup for The SAP Insider: one web service and one Postgres database.
+services:
+  - type: web
+    name: sap-insider
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    preDeployCommand: npx drizzle-kit push --force && npx tsx server/first-run.ts
+    startCommand: npm run start
+    healthCheckPath: /api/updates
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sap-insider-db
+          property: connectionString
+
+databases:
+  - name: sap-insider-db
+    plan: basic-256mb
+    databaseName: sap_insider

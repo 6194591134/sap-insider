@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/page-header";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,15 +32,8 @@ export default function Reviews() {
   const hasActiveFilters = filterDOT || filterNonDOT || filterVerified;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-8 py-12">
-          <h1 className="text-3xl lg:text-4xl font-bold">Provider Reviews</h1>
-          <p className="text-muted-foreground mt-2">
-            Independent ratings and reviews of DOT education providers
-          </p>
-        </div>
-      </div>
+    <div>
+      <PageHeader kicker="Directory" title="Provider Reviews" intro="Independent ratings and reviews of DOT education providers" />
 
       <div className="container mx-auto px-4 lg:px-8 py-8">
         <div className="grid lg:grid-cols-4 gap-8">

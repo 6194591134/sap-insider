@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 import Home from "@/pages/home";
 import Updates from "@/pages/updates";
 import UpdateDetail from "@/pages/update-detail";
@@ -45,6 +46,7 @@ function App() {
             <main className="flex-1">
               <Router />
             </main>
+            <Footer />
           </div>
           <Toaster />
         </TooltipProvider>

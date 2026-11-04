@@ -1,170 +1,113 @@
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Clock, ArrowLeft, Building2 } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
+import { newsDate, splitSources, storyImage, storyImages } from "@/lib/news";
 import type { RegulatoryUpdate } from "@shared/schema";
+
+function sourceLabel(url: string) {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    if (host.includes("govinfo") || host.includes("federalregister")) return "Federal Register notice";
+    if (host.includes("transportation.gov")) return "U.S. DOT";
+    if (host.includes("fmcsa")) return "FMCSA";
+    if (host.includes("faa.gov")) return "FAA";
+    return host;
+  } catch {
+    return "Official source";
+  }
+}
 
 export default function UpdateDetail() {
   const { id } = useParams<{ id: string }>();
-
-  const { data: update, isLoading, error } = useQuery<RegulatoryUpdate>({
-    queryKey: ["/api/updates", id],
-  });
+  const { data: update, isLoading, error } = useQuery<RegulatoryUpdate>({ queryKey: ["/api/updates", id] });
+  const { data: all } = useQuery<RegulatoryUpdate[]>({ queryKey: ["/api/updates"] });
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="border-b bg-muted/30">
-          <div className="container mx-auto px-4 lg:px-8 py-12">
-            <div className="h-8 w-48 bg-muted animate-pulse rounded mb-4" />
-            <div className="h-12 w-3/4 bg-muted animate-pulse rounded" />
-          </div>
-        </div>
-        <div className="container mx-auto px-4 lg:px-8 py-8">
-          <Card>
-            <CardContent className="py-8 space-y-4">
-              <div className="h-4 w-full bg-muted animate-pulse rounded" />
-              <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
-              <div className="h-4 w-4/5 bg-muted animate-pulse rounded" />
-            </CardContent>
-          </Card>
-        </div>
+      <div className="container mx-auto px-4 lg:px-8 py-10 max-w-3xl space-y-4">
+        <div className="h-4 w-40 bg-muted animate-pulse rounded" />
+        <div className="h-12 w-full bg-muted animate-pulse rounded" />
+        <div className="aspect-[16/9] w-full bg-muted animate-pulse rounded-sm" />
       </div>
     );
   }
 
   if (error || !update) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 lg:px-8 py-12">
-          <Card>
-            <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground mb-4">Update not found</p>
-              <Link href="/updates">
-                <Button variant="outline" data-testid="button-back-to-updates">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Updates
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="container mx-auto px-4 lg:px-8 py-20 text-center">
+        <p className="text-muted-foreground mb-4">This update could not be found.</p>
+        <Link href="/updates" className="font-semibold underline">Back to all updates</Link>
       </div>
     );
   }
 
-  const sourceMatch = update.content.match(/\n\nOfficial sources?: ([^\n]+)$/);
-  const sourceUrls = sourceMatch
-    ? sourceMatch[1].split("|").map((url) => url.trim()).filter((url) => url.startsWith("https://"))
-    : [];
-  const updateContent = sourceMatch
-    ? update.content.slice(0, sourceMatch.index).trimEnd()
-    : update.content;
+  const { body, sources } = splitSources(update.content);
+  const related = (all || []).filter((u) => u.id !== update.id).slice(0, 3);
+  const imgs = storyImages(all || []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-8 py-12">
-          <Link href="/updates">
-            <Button variant="ghost" size="sm" className="mb-4" data-testid="button-back">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Updates
-            </Button>
-          </Link>
-          
-          <div className="flex items-center gap-2 flex-wrap mb-4">
-            <Badge variant="default" data-testid={`badge-agency-${update.agency}`}>
-              <Building2 className="mr-1 h-3 w-3" />
-              {update.agency}
-            </Badge>
-            <Badge variant="outline">{update.category}</Badge>
-            {update.featured && (
-              <Badge variant="secondary">Featured</Badge>
-            )}
-          </div>
-          
-          <h1 className="text-3xl lg:text-4xl font-bold" data-testid="text-update-title">
-            {update.title}
-          </h1>
-          
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-4">
-            <span className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              Published: {new Date(update.publishedDate).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-              })}
-            </span>
-          </div>
+    <article className="container mx-auto px-4 lg:px-8 py-8">
+      <div className="max-w-3xl mx-auto">
+        <Link href="/updates" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground" data-testid="button-back">
+          <ArrowLeft className="h-4 w-4" /> All updates
+        </Link>
+
+        <div className="kicker mt-6">
+          {update.agency} <span className="text-muted-foreground font-semibold">· {update.category}</span>
+        </div>
+        <h1 className="headline text-3xl md:text-5xl leading-[1.08] mt-3" data-testid="text-update-title">{update.title}</h1>
+        <p className="text-xl text-muted-foreground mt-4 leading-relaxed" data-testid="text-update-summary">{update.summary}</p>
+        <div className="text-sm text-muted-foreground mt-4 pb-6 border-b">
+          Published {newsDate(update.publishedDate, { month: "long", day: "numeric", year: "numeric" })}
         </div>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8 py-8">
-        <div className="max-w-4xl">
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg">Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-foreground leading-relaxed" data-testid="text-update-summary">
-                {update.summary}
-              </p>
-            </CardContent>
-          </Card>
+      <img src={imgs[update.id] || storyImage(update)} alt="" className="max-w-5xl w-full mx-auto aspect-[16/9] object-cover rounded-sm mt-8 bg-muted" />
 
-          {update.plainLanguageSummary && (
-            <Card className="mb-6 border-2 border-primary/20 bg-primary/5">
-              <CardHeader>
-                <CardTitle className="text-lg">Plain Language Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-foreground leading-relaxed" data-testid="text-plain-summary">
-                  {update.plainLanguageSummary}
-                </p>
-              </CardContent>
-            </Card>
-          )}
+      <div className="max-w-3xl mx-auto mt-8">
+        {update.plainLanguageSummary && (
+          <div className="border-l-4 border-[hsl(4_72%_44%)] bg-muted/50 px-5 py-4 mb-8" data-testid="text-plain-summary">
+            <div className="text-xs font-bold uppercase tracking-[0.14em] mb-1">What it means</div>
+            <p className="text-lg leading-relaxed">{update.plainLanguageSummary}</p>
+          </div>
+        )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Full Update</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div 
-                className="prose prose-sm dark:prose-invert max-w-none"
-                data-testid="text-update-content"
-              >
-                {updateContent.split('\n').map((paragraph, index) => (
-                  <p key={index} className="text-foreground leading-relaxed mb-4">
-                    {paragraph}
-                  </p>
-                ))}
-                {sourceUrls.length > 0 && (
-                  <div className="mt-6 border-t pt-4">
-                    <p className="text-sm font-semibold mb-2">Official source{sourceUrls.length > 1 ? "s" : ""}</p>
-                    <div className="flex flex-wrap gap-x-5 gap-y-2">
-                      {sourceUrls.map((url, index) => (
-                        <a
-                          key={url}
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-primary underline underline-offset-4 hover:opacity-80"
-                        >
-                          {sourceUrls.length > 1 ? `View source ${index + 1}` : "View official source"}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+        <div className="text-lg leading-[1.75] space-y-5" data-testid="text-update-content">
+          {body.split("\n").filter(Boolean).map((p, i) => <p key={i}>{p}</p>)}
         </div>
+
+        {sources.length > 0 && (
+          <div className="mt-10 border-t-2 border-foreground/90 pt-4">
+            <div className="text-xs font-bold uppercase tracking-[0.14em] mb-3">Official source{sources.length > 1 ? "s" : ""}</div>
+            <ul className="space-y-2">
+              {sources.map((url) => (
+                <li key={url}>
+                  <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-semibold underline underline-offset-4 hover:opacity-80">
+                    {sourceLabel(url)} <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="text-sm text-muted-foreground mt-3">Always confirm requirements with the governing agency before acting on them.</p>
+          </div>
+        )}
       </div>
-    </div>
+
+      {related.length > 0 && (
+        <section className="max-w-5xl mx-auto mt-16">
+          <div className="section-label mb-6">More updates</div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {related.map((u) => (
+              <Link key={u.id} href={`/updates/${u.id}`} className="news-link block">
+                <img src={imgs[u.id]} alt="" loading="lazy" className="aspect-[16/9] w-full object-cover rounded-sm mb-3 bg-muted" />
+                <div className="kicker">{u.agency}</div>
+                <h3 className="headline text-lg leading-snug mt-1">{u.title}</h3>
+                <div className="text-xs text-muted-foreground mt-2">{newsDate(u.publishedDate)}</div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+    </article>
   );
 }

@@ -1,9 +1,9 @@
+import { PageHeader } from "@/components/page-header";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Circle, ChevronRight, Download, Route } from "lucide-react";
-import sectionRtdImg from "@/assets/images/section-rtd.png";
 
 const rtdSteps = [
   {
@@ -90,26 +90,13 @@ export default function RTDGuide() {
   const [activeStep, setActiveStep] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b relative overflow-hidden">
-        <img src={sectionRtdImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/80" />
-        <div className="container mx-auto px-4 lg:px-8 py-12 relative">
-          <div className="flex items-center gap-3 mb-2">
-            <Route className="h-6 w-6 text-primary" />
-            <Badge variant="outline">Step-by-Step Guide</Badge>
-          </div>
-          <h1 className="text-3xl lg:text-4xl font-bold">Return-to-Duty (RTD) Process Guide</h1>
-          <p className="text-muted-foreground mt-2">
-            A step-by-step guide to the DOT Return-to-Duty process for SAPs and employers
-          </p>
-        </div>
-      </div>
+    <div>
+      <PageHeader kicker="Step-by-step guide" title="Return-to-Duty (RTD) Process Guide" intro="A step-by-step guide to the DOT Return-to-Duty process for SAPs and employers" />
 
       <div className="container mx-auto px-4 lg:px-8 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Introduction */}
-          <Card className="border-2 border-primary">
+          <Card className="border">
             <CardHeader>
               <CardTitle>Understanding the RTD Process</CardTitle>
             </CardHeader>
@@ -131,7 +118,7 @@ export default function RTDGuide() {
 
           {/* Interactive Flowchart */}
           <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Step-by-Step Process</h2>
+            <h2 className="headline text-3xl">Step-by-Step Process</h2>
             <div className="space-y-3">
               {rtdSteps.map((step, index) => (
                 <div key={step.id}>

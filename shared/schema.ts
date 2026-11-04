@@ -40,6 +40,7 @@ export const regulatoryUpdates = pgTable("regulatory_updates", {
   plainLanguageSummary: text("plain_language_summary"),
   publishedDate: timestamp("published_date").notNull(),
   featured: boolean("featured").default(false),
+  imageUrl: text("image_url"), // optional; if empty, a topic photo is used
 });
 
 export const insertRegulatoryUpdateSchema = createInsertSchema(regulatoryUpdates).omit({
