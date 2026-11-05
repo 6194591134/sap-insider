@@ -73,6 +73,7 @@ export default function ProviderProfile() {
                 <div>
                   <h1 className="headline text-4xl">{provider.name}</h1>
                   <div className="flex items-center gap-3 mt-2 flex-wrap">
+                    {provider.reviewCount ? (<>
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <Star
@@ -89,6 +90,7 @@ export default function ProviderProfile() {
                     <span className="text-muted-foreground">
                       ({provider.reviewCount} reviews)
                     </span>
+                    </>) : <span className="text-muted-foreground">No reviews yet</span>}
                   </div>
                 </div>
                 {provider.verified && (

@@ -6,7 +6,7 @@ services:
     plan: starter
     region: virginia
     buildCommand: npm ci --include=dev && npm run build
-    preDeployCommand: npx drizzle-kit push --force && npx tsx server/first-run.ts
+    preDeployCommand: npx drizzle-kit push --force && npx tsx server/first-run.ts && npx tsx server/cleanup-placeholders.ts
     startCommand: npm run start
     healthCheckPath: /api/updates
     domains:

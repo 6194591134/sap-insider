@@ -165,6 +165,7 @@ export default function Reviews() {
                       <div>
                         <CardTitle className="text-lg leading-tight">{provider.name}</CardTitle>
                         <div className="flex items-center gap-2 mt-2">
+                          {provider.reviewCount ? (<>
                           <div className="flex items-center gap-1">
                             {[...Array(5)].map((_, i) => (
                               <Star
@@ -181,6 +182,7 @@ export default function Reviews() {
                           <span className="text-xs text-muted-foreground">
                             ({provider.reviewCount})
                           </span>
+                          </>) : <span className="text-sm text-muted-foreground">No reviews yet</span>}
                         </div>
                       </div>
                     </CardHeader>

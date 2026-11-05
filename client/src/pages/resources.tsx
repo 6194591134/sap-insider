@@ -147,7 +147,7 @@ export default function Resources() {
         ) : (
           <Card>
             <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground">No resources found matching your criteria</p>
+              <p className="text-muted-foreground">{resources && resources.length > 0 ? "No resources found matching your criteria" : "Templates, guides and checklists are coming soon."}</p>
               {(searchQuery || selectedType) && (
                 <Button
                   variant="outline"

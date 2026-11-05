@@ -124,8 +124,8 @@ export default function Home() {
       {/* Providers + newsletter */}
       <section className="mt-14 grid gap-10 lg:grid-cols-12">
         <div className="lg:col-span-8 min-w-0">
-          <div className="section-label mb-2">Top-rated education providers</div>
-          <p className="text-sm text-muted-foreground mb-4">Independently reviewed by compliance professionals.</p>
+          <div className="section-label mb-2">Education providers</div>
+          <p className="text-sm text-muted-foreground mb-4">DOT and non-DOT education providers listed on The SAP Insider.</p>
           <ol className="divide-y border-b">
             {(topProviders || []).map((p, i) => (
               <li key={p.id}>
@@ -136,19 +136,25 @@ export default function Home() {
                     <div className="text-sm text-muted-foreground truncate">{p.description}</div>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="flex gap-0.5 justify-end">
-                      {Array.from({ length: 5 }).map((_, s) => (
-                        <Star key={s} className={`h-3.5 w-3.5 ${s < p.rating ? "fill-foreground text-foreground" : "text-muted-foreground/30"}`} />
-                      ))}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">{p.reviewCount} reviews</div>
+                    {p.reviewCount ? (
+                      <>
+                        <div className="flex gap-0.5 justify-end">
+                          {Array.from({ length: 5 }).map((_, s) => (
+                            <Star key={s} className={`h-3.5 w-3.5 ${s < p.rating ? "fill-foreground text-foreground" : "text-muted-foreground/30"}`} />
+                          ))}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">{p.reviewCount} reviews</div>
+                      </>
+                    ) : (
+                      <div className="text-xs text-muted-foreground">No reviews yet</div>
+                    )}
                   </div>
                 </Link>
               </li>
             ))}
           </ol>
           <Link href="/reviews" className="inline-flex items-center gap-1 text-sm font-semibold mt-3 hover:underline">
-            See all providers <ArrowRight className="h-4 w-4" />
+            All providers <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
