@@ -9,6 +9,9 @@ services:
     preDeployCommand: npx drizzle-kit push --force && npx tsx server/first-run.ts
     startCommand: npm run start
     healthCheckPath: /api/updates
+    domains:
+      - thesapinsider.com
+      - www.thesapinsider.com
     envVars:
       - key: NODE_VERSION
         value: "20"
